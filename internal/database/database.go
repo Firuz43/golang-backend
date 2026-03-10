@@ -51,7 +51,7 @@ func runMigrations(dsn string) error {
 		return err
 	}
 
-	// Apply all 'Up' migrations
+	// Apply all 'Up' migrations/
 	err = m.Up()
 	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return err

@@ -48,7 +48,7 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	err = h.DB.QueryRow(query, req.Email, string(hashedPassword)).Scan(&user.ID, &user.Email, &user.CreatedAt)
 	if err != nil {
-		// In production, check if error is "unique_violation" (email already exists)
+		// In production, check if error is "unique_violation" (email already exists)//
 		http.Error(w, "Could not create user: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

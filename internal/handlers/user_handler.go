@@ -10,12 +10,13 @@ import (
 )
 
 type UserHandler struct {
-	DB *sqlx.DB
+	DB *sqlx.DB //Database connection can be shared across all handler methods
 }
 
 // NewUserHandler is our "Constructor"
 func NewUserHandler(db *sqlx.DB) *UserHandler {
 	return &UserHandler{DB: db}
+	//receive the DB connection and store it in the struct for later use
 }
 
 type RegisterRequest struct {
@@ -62,7 +63,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
 	// A simple query to get the first user from the database
-	// Coming from Java? Notice how we don't need a heavy ORM here!
+	// Coming from Java? Notice how we don't need a heavy ORM here!!
 	err := h.DB.Get(&user, "SELECT id, email, created_at FROM users LIMIT 1")
 
 	if err != nil {

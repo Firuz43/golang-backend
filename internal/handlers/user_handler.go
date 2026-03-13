@@ -48,7 +48,7 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	err = h.DB.QueryRow(query, req.Email, string(hashedPassword)).Scan(&user.ID, &user.Email, &user.CreatedAt)
 	if err != nil {
-		// In production, check if error is "unique_violation" (email already exists)//
+		// In production, check if error is "unique_violation" (email already exists)
 		http.Error(w, "Could not create user: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -62,7 +62,7 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
-	// A simple query to get the first user from the database
+	// A simple query to get the first user from the database//
 	// Coming from Java? Notice how we don't need a heavy ORM here!!
 	err := h.DB.Get(&user, "SELECT id, email, created_at FROM users LIMIT 1")
 

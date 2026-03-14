@@ -44,7 +44,7 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// 3. Save to Database
 	// We use 'QueryRow' because we want Postgres to return the ID it generated
 	var user models.User
-	query := `INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email, created_at`
+	query := `INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email, created_at` // save email and hashed password, then return the new user's ID, email, and creation time
 
 	err = h.DB.QueryRow(query, req.Email, string(hashedPassword)).Scan(&user.ID, &user.Email, &user.CreatedAt)
 	if err != nil {

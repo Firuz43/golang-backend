@@ -15,7 +15,7 @@ import (
 
 // NewDatabase initializes the Postgres connection and runs migrations
 func NewDatabase() (*sqlx.DB, error) {
-	// DSN = Data Source Name. In production, move these to environment variables!
+	// DSN = Data Source Name. In production, move these to environment variables!//
 	dsn := "postgres://user:password@localhost:5432/ecommerce?sslmode=disable"
 
 	// 1. Open the connection using 'pgx' driver

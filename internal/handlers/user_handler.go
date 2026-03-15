@@ -19,6 +19,7 @@ func NewUserHandler(db *sqlx.DB) *UserHandler {
 	//receive the DB connection and store it in the struct for later use
 }
 
+// RegisterRequest defines what data we expect from the frontend (Flutter)
 type RegisterRequest struct {
 	Email    string `json: "email"`
 	Password string `json: "password"`

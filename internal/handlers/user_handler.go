@@ -9,6 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Wrap our DB with a struct to securely pass it around to our handler methods
 type UserHandler struct {
 	DB *sqlx.DB //Database connection can be shared across all handler methods
 }
@@ -64,7 +65,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
 	// A simple query to get the first user from the database//
-	// Coming from Java? Notice how we don't need a heavy ORM here!!//
+	// Coming from Java? Notice how we don't need a heavy ORM here!!////
 	err := h.DB.Get(&user, "SELECT id, email, created_at FROM users LIMIT 1")
 
 	if err != nil {

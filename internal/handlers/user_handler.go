@@ -67,11 +67,11 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func (h *UserHandler) LoginUser(w http.Request, r *http.Request) {
+func (h *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	//1. Decode the incoming JSON into our LoginRequest struct
 	var req LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid Input", http.StatusBadRequest)
+		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
 

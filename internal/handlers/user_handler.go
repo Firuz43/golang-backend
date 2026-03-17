@@ -26,6 +26,12 @@ type RegisterRequest struct {
 	Password string `json: "password"`
 }
 
+// LoginRequest captures the email and password from the JSON body
+type LoginRequest struct {
+	Email    string `json: "email"`
+	Password string `json: "password"`
+}
+
 func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the incoming JSON request
 	var req RegisterRequest
@@ -59,6 +65,18 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // Send 201 Created status//
 	json.NewEncoder(w).Encode(user)
+}
+
+func (h *UserHandler) LoginUser(w http.Request, r *http.Request) {
+	//1. Decode the incoming JSON into our LoginRequest struct
+	var req LoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid Input", http.StatusBadRequest)
+		return
+	}
+
+	// 2. Look for the user in the database by their email
+
 }
 
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {

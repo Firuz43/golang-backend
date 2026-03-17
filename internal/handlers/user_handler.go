@@ -57,7 +57,7 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	// 4. Respond to the client
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated) // Send 201 Created status
+	w.WriteHeader(http.StatusCreated) // Send 201 Created status//
 	json.NewEncoder(w).Encode(user)
 }
 

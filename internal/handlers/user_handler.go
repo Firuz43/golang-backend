@@ -76,7 +76,29 @@ func (h *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 2. Look for the user in the database by their email
+	var user models.User
+	query := "SELECT id, email, password_hash FROM users WHERE email = $1"
 
+	// h.DB.Get is a helper that fetches one row and maps it directly to our struct
+	err := h.DB.Get(&user, query, req.Email)
+	if err != nil {
+		//If the email isn't found, we return an unathorized error
+		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+
+		return // Stop execution here
+	}
+
+	// 3. Compare the stored hash with the plain-text password form the request
+	//bycrypt.CompareHashAndPassword returns nil if the password is correct
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password))
+	if err != nil {
+		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+		return // Stop execution here
+	}
+
+	// 4. If everything is correct, we can respond with the user data (or a JWT token in a real app)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }
 
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {

@@ -23,6 +23,8 @@ func main() {
 	// 3. Routes
 	http.HandleFunc("/register", userHandler.RegisterUser)
 
+	http.HandleFunc("/login", userHandler.LoginUser)
+
 	http.HandleFunc("/user", userHandler.GetUser)
 
 	log.Println("Server is running on http://localhost:8000")

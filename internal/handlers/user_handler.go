@@ -85,7 +85,7 @@ func (h *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 		//If the email isn't found, we return an unathorized error
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 
-		return // Stop execution here
+		return // Stop execution here/
 	}
 
 	// 3. Compare the stored hash with the plain-text password form the request

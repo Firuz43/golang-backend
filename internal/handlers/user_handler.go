@@ -26,12 +26,6 @@ type RegisterRequest struct {
 	Password string `json: "password"`
 }
 
-// LoginRequest captures the email and password from the JSON body
-type LoginRequest struct {
-	Email    string `json: "email"`
-	Password string `json: "password"`
-}
-
 func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the incoming JSON request
 	var req RegisterRequest
@@ -52,7 +46,7 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// 3. Save to Database
 	// We use 'QueryRow' because we want Postgres to return the ID it generated
 	var user models.User
-	query := `INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email, created_at` // save email and hashed password, then return the new user's ID, email, and creation time
+	query := `INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email, created_at` // save email and hashed password, then return the new user's ID, email, and creation time//
 
 	err = h.DB.QueryRow(query, req.Email, string(hashedPassword)).Scan(&user.ID, &user.Email, &user.CreatedAt)
 	if err != nil {
@@ -65,6 +59,12 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // Send 201 Created status//
 	json.NewEncoder(w).Encode(user)
+}
+
+// LoginRequest captures the email and password from the JSON body
+type LoginRequest struct {
+	Email    string `json: "email"`
+	Password string `json: "password"`
 }
 
 func (h *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {

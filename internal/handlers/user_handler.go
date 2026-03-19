@@ -61,6 +61,10 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
+// ########################################################################## ##########################################################################
+
+// ########################################################################## LOGIN HANDLER ##########################################################################
+
 // LoginRequest captures the email and password from the JSON body
 type LoginRequest struct {
 	Email    string `json: "email"`
@@ -101,6 +105,7 @@ func (h *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
+// ########################################################################## GET USER HANDLER ##########################################################################
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 

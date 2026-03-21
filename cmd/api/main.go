@@ -7,6 +7,7 @@ import (
 
 	"github.com/Firuz43/ecommerce/internal/database"
 	"github.com/Firuz43/ecommerce/internal/handlers"
+	"github.com/Firuz43/ecommerce/internal/middleware"
 	"github.com/joho/godotenv"
 )
 
@@ -25,7 +26,7 @@ func main() {
 	log.Printf("Server starting on port %s...", port)
 
 	// 1. Initialize Database (This also runs migrations)
-	db, err := database.NewDatabase()
+	db, err := database.NewDatabase(dbURL)
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
@@ -39,7 +40,7 @@ func main() {
 
 	http.HandleFunc("/login", userHandler.LoginUser)
 
-	http.HandleFunc("/user", userHandler.GetUser)
+	http.HandleFunc("/user", middleware.AuthMiddleware(userHandler.GetUser))
 
 	log.Println("Server is running on http://localhost:8000")
 	log.Fatal(http.ListenAndServe(":8000", nil))

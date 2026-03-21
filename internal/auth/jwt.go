@@ -52,3 +52,23 @@ func GenerateToken(userID string, email string) (string, error) {
 
 	return tokenString, nil
 }
+
+// ValidateToken parses the JWT string and returns the claims if valid
+func ValidateToken(tokenString string) (*Claims, error) {
+	// 1. Parse the token
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		// Verify the "Signing Method" is what we expect (HS256)
+		return GetJWTSecret(), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. Extract the data (Claims)
+	if claims, ok := token.Claims.(*Claims); ok && token.Valid {
+		return claims, nil
+	}
+
+	return nil, jwt.ErrSignatureInvalid
+}

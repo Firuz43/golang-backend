@@ -1,0 +1,25 @@
+# 1. Ignore the environment file (SECURITY!)
+.env
+
+# 2. Ignore compiled binaries (the actual .exe or app files)
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+__debug_bin
+main
+
+# 3. Ignore IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 4. Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# 5. Ignore dependency folders (if you use vendor mode)
+vendor/

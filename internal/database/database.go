@@ -14,9 +14,9 @@ import (
 )
 
 // NewDatabase initializes the Postgres connection and runs migrations
-func NewDatabase() (*sqlx.DB, error) {
+func NewDatabase(connStr string) (*sqlx.DB, error) {
 	// DSN = Data Source Name. In production, move these to environment variables!//
-	dsn := "postgres://user:password@localhost:5432/ecommerce?sslmode=disable"
+	dsn := connStr
 
 	// 1. Open the connection using 'pgx' driver
 	db, err := sqlx.Open("pgx", dsn)

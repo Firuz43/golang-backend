@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Firuz43/ecommerce/internal/auth"
 	"github.com/Firuz43/ecommerce/internal/models"
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
@@ -72,37 +73,48 @@ type LoginRequest struct {
 }
 
 func (h *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
-	//1. Decode the incoming JSON into our LoginRequest struct
-	var req LoginRequest
+	// 1. Setup a struct to capture the incoming JSON (Email/Password)
+	var req struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	// 2. Decode the Request Body into our struct
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	// 2. Look for the user in the database by their email
+	// 3. Find the user in the database by their email
 	var user models.User
-	query := "SELECT id, email, password_hash FROM users WHERE email = $1"
-
-	// h.DB.Get is a helper that fetches one row and maps it directly to our struct
+	query := `SELECT id, email, password_hash FROM users WHERE email = $1`
 	err := h.DB.Get(&user, query, req.Email)
 	if err != nil {
-		//If the email isn't found, we return an unathorized error
+		// Security Tip: Use a generic error so hackers don't know if the email exists
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
-
-		return // Stop execution here/
+		return
 	}
 
-	// 3. Compare the stored hash with the plain-text password form the request
-	//bycrypt.CompareHashAndPassword returns nil if the password is correct
+	// 4. Compare the plain-text password from the user with the hash from the DB
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password))
 	if err != nil {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
-		return // Stop execution here
+		return
 	}
 
-	// 4. If everything is correct, we can respond with the user data (or a JWT token in a real app)
+	// 5. SUCCESS! Now generate the "VIP Pass" (JWT)
+	token, err := auth.GenerateToken(user.ID, user.Email)
+	if err != nil {
+		http.Error(w, "Could not create token", http.StatusInternalServerError)
+		return
+	}
+
+	// 6. Send the token back to your Flutter app as JSON
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(map[string]string{
+		"token":   token,
+		"message": "Login successful!",
+	})
 }
 
 // ########################################################################## GET USER HANDLER ##########################################################################

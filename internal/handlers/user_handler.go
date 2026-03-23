@@ -119,17 +119,27 @@ func (h *UserHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 
 // ########################################################################## GET USER HANDLER ##########################################################################
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
+	// 1. Get the UserID from the context (set by the middleware)
+	// We use type assertion .(string) because context stores values as interface{}
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok {
+		http.Error(w, "Could not get user from context", http.StatusInternalServerError)
+		return
+	}
+
+	// 2. Fetch the user from the database using that ID
 	var user models.User
 
-	// A simple query to get the first user from the database//
-	// Coming from Java? Notice how we don't need a heavy ORM here!!////
-	err := h.DB.Get(&user, "SELECT id, email, created_at FROM users LIMIT 1")
-
+	// We only select id, email, and created_at because we don't want to send the password hash back to the client
+	query := `SELECT id, email, created_at FROM users WHERE id = $1`
+	// sqlx's Get method is a convenient way to run a query and scan the result into a struct
+	err := h.DB.Get(&user, query, userID)
 	if err != nil {
 		http.Error(w, "User not found", http.StatusNotFound)
 		return
 	}
 
+	// 3. Send the user data back (without the password hash!)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 }

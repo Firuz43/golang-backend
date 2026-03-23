@@ -42,6 +42,6 @@ func main() {
 
 	http.HandleFunc("/user", middleware.AuthMiddleware(userHandler.GetUser))
 
-	log.Println("Server is running on http://localhost:8000")
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Println("Server is running on http://localhost:" + port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

@@ -37,7 +37,7 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 2. Hash the password
-	// Bcrypt.DefaultCost is a balance between security and speed
+	// Bcrypt.DefaultCost is a balance between security and speed//
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		http.Error(w, "Failed to hash password", http.StatusInternalServerError)

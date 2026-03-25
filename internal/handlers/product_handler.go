@@ -20,6 +20,7 @@ func NewProductHandler(db *sqlx.DB) *ProductHandler {
 
 // GetProducts returns all products in the database
 func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
+	//
 	var products []models.Product
 
 	// We want to return products sorted by newest first, so we order by created_at DESC

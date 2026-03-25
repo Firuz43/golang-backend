@@ -32,22 +32,20 @@ func main() {
 	}
 	defer db.Close()
 
+	//Initialize Handlers
 	// 2. Inject DB into Handler (Constructor Injection)
 	userHandler := handlers.NewUserHandler(db)
-
-	// For product routes, we can create a separate handler if needed
 	productHandler := handlers.NewProductHandler(db)
 
 	// 3. Routes
 	//Auth routes
 	http.HandleFunc("/register", userHandler.RegisterUser)
-
 	http.HandleFunc("/login", userHandler.LoginUser)
-
 	http.HandleFunc("/user", middleware.AuthMiddleware(userHandler.GetUser))
 
 	// Product routes
 	http.HandleFunc("/products", productHandler.GetProducts)
+	http.HandleFunc("/products/add", middleware.AuthMiddleware(productHandler.CreateProduct))
 
 	log.Println("Server is running on http://localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

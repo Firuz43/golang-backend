@@ -35,3 +35,41 @@ func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(products)
 }
+
+// CreateProduct allows adding a new item to the catalog
+func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
+	// 1. Define the input structure
+	var req struct {
+		Name        string  `json:"name"`
+		Description string  `json:"description"`
+		Price       float64 `json:"price"`
+		Stock       int     `json:"stock"`
+		ImageURL    string  `json:"image_url"`
+	}
+
+	// 2. Decode the incoming JSON
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	// 3. Insert into Database
+	// We let Postgres handle the ID (UUID) and the Timestamps automatically
+	query := `INSERT INTO products (name, description, price, stock, image_url) 
+			  VALUES ($1, $2, $3, $4, $5) RETURNING id`
+
+	var id string
+	err := h.DB.QueryRow(query, req.Name, req.Description, req.Price, req.Stock, req.ImageURL).Scan(&id)
+
+	if err != nil {
+		http.Error(w, "Failed to save product: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// 4. Return success
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]string{
+		"id":      id,
+		"message": "Product created successfully!",
+	})
+}

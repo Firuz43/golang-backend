@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// Product represents an item for sale in our e-commerce system
 type Product struct {
 	ID          string    `json:"id" db:"id"`
 	Name        string    `json:"name" db:"name"`

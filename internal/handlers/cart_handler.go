@@ -16,7 +16,7 @@ func NewCartHandler(db *sqlx.DB) *CartHandler {
 }
 
 func (h *CartHandler) AddToCart(w http.ResponseWriter, r *http.Request) {
-
+	// 1. Get UserID from Context (The Bouncer put it there!)
 	userID := r.Context().Value("user_id").(string)
 
 	var req struct {
@@ -29,11 +29,12 @@ func (h *CartHandler) AddToCart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 2. UPSERT Logic: Insert a new item, OR if it exists, update the quantity
 	query := `
-			INSERT INTO cart_items (user_id, product_id, qunatity)
-			VALUES ($1, $2, $3)
-			ON CONFLICT (user_id, product_id)
-			DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity, updated_at = NOW()
+		INSERT INTO cart_items (user_id, product_id, quantity)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (user_id, product_id) 
+		DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity, updated_at = NOW()
 	`
 
 	_, err := h.DB.Exec(query, userID, req.ProductID, req.Quantity)

@@ -36,6 +36,7 @@ func main() {
 	// 2. Inject DB into Handler (Constructor Injection)
 	userHandler := handlers.NewUserHandler(db)
 	productHandler := handlers.NewProductHandler(db)
+	cartHandler := handlers.NewCartHandler(db)
 
 	// 3. Routes
 	//Auth routes
@@ -46,6 +47,10 @@ func main() {
 	// Product routes
 	http.HandleFunc("/products", productHandler.GetProducts)
 	http.HandleFunc("/products/add", middleware.AuthMiddleware(productHandler.CreateProduct))
+
+	// Cart routes
+	// POST /cart - Adds an item to the user's specific cart
+	http.HandleFunc("/cart", middleware.AuthMiddleware(cartHandler.AddToCart))
 
 	log.Println("Server is running on http://localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

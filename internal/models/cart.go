@@ -7,7 +7,9 @@ type CartItem struct {
 	UserID    string    `json:"user_id" db:"user_id"`
 	ProductID string    `json:"product_id" db:"product_id"`
 	Quantity  int       `json:"quantity" db:"quantity"`
-	CreatedAt time.Time `json: "created_at" db:"created_at"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
 
-	Product *Product `json:"product, omitempty"`
+	// We add this so we can "Join" product details (Name, Price)
+	// when we show the cart to the user
+	Product *Product `json:"product,omitempty"`
 }

@@ -18,6 +18,7 @@ func NewProductHandler(db *sqlx.DB) *ProductHandler {
 	return &ProductHandler{DB: db}
 }
 
+// ################ G E T  A L L  P R O D U C T S #################
 // GetProducts returns all products in the database
 func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	//
@@ -36,6 +37,7 @@ func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(products)
 }
 
+// ################# C R E A T E  P R O D U C T #################
 // CreateProduct allows adding a new item to the catalog
 func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	// 1. Define the input structure
@@ -47,7 +49,7 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		ImageURL    string  `json:"image_url"`
 	}
 
-	// 2. Decode the incoming JSON
+	// 2. Decode the incoming JSON''
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return

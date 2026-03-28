@@ -50,7 +50,7 @@ func main() {
 
 	// Cart routes
 	// POST /cart - Adds an item to the user's specific cart
-	http.HandleFunc("/cart", middleware.AuthMiddleware(cartHandler.AddToCart))
+	// http.HandleFunc("/cart", middleware.AuthMiddleware(cartHandler.AddToCart))
 	http.HandleFunc("/cart", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			cartHandler.AddToCart(w, r)

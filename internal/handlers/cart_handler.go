@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Firuz43/ecommerce/internal/models"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -45,4 +46,33 @@ func (h *CartHandler) AddToCart(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Item added to cart"})
+}
+
+// ######################## G E T C A R T ###########################
+
+// GetCart returns all items in the current user's cart with product details
+func (h *CartHandler) GetCart(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value("user_id").(string)
+
+	// We use a JOIN to get the Product name and price in one go
+	query := `
+		SELECT 
+			c.id, c.user_id, c.product_id, c.quantity, c.created_at,
+			p.name AS "product.name", 
+			p.price AS "product.price", 
+			p.image_url AS "product.image_url"
+		FROM cart_items c
+		JOIN products p ON c.product_id = p.id
+		WHERE c.user_id = $1
+	`
+
+	var items []models.CartItem
+	err := h.DB.Select(&items, query, userID)
+	if err != nil {
+		http.Error(w, "Could not fetch cart: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(items)
 }

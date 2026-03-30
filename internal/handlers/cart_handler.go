@@ -81,7 +81,7 @@ func (h *CartHandler) GetCart(w http.ResponseWriter, r *http.Request) {
 func (h *CartHandler) RemoveFromCart(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value("user_id").(string)
 
-	// We can get the product_id from the URL query or a JSON body.
+	// We can get the product_id from the URL query or a JSON body.//
 	// Let's use a URL query for a change: /cart/remove?product_id=UUID
 	productID := r.URL.Query().Get("product_id")
 	if productID == "" {

@@ -38,7 +38,7 @@ func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 // ################# C R E A T E  P R O D U C T #################
-// CreateProduct allows adding a new item to the catalog
+// CreateProduct allows adding a new item to the catalog//
 func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	// 1. Define the input structure
 	var req struct {

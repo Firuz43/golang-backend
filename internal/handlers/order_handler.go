@@ -11,10 +11,12 @@ type OrderHandler struct {
 	DB *sqlx.DB
 }
 
+// NewOrderHandler initializes the OrderHandler with a database connection constructor function. This promotes better testability and separation of concerns.
 func NewOrderHandler(db *sqlx.DB) *OrderHandler {
 	return &OrderHandler{DB: db}
 }
 
+// Checkout processes the user's cart and creates an order. It ensures that all steps are atomic using a database transaction. If any step fails, the transaction is rolled back to maintain data integrity.
 func (h *OrderHandler) Checkout(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value("user_id").(string)
 

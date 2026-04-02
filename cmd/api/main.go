@@ -37,6 +37,7 @@ func main() {
 	userHandler := handlers.NewUserHandler(db)
 	productHandler := handlers.NewProductHandler(db)
 	cartHandler := handlers.NewCartHandler(db)
+	orderHandler := handlers.NewOrderHandler(db)
 
 	// 3. Routes
 	//Auth routes
@@ -60,6 +61,9 @@ func main() {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	}))
+
+	// Order routes
+	http.HandleFunc("/checkout", middleware.AuthMiddleware(orderHandler.Checkout))
 
 	log.Println("Server is running on http://localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

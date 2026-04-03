@@ -50,14 +50,16 @@ func main() {
 	http.HandleFunc("/products/add", middleware.AuthMiddleware(productHandler.CreateProduct))
 
 	// Cart routes
-	// POST /cart - Adds an item to the user's specific cart
-	// http.HandleFunc("/cart", middleware.AuthMiddleware(cartHandler.AddToCart))//
+	// We use a single endpoint for cart operations, and switch based on the HTTP method. This keeps our API clean and RESTful.
 	http.HandleFunc("/cart", middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost {
-			cartHandler.AddToCart(w, r)
-		} else if r.Method == http.MethodGet {
+		switch r.Method {
+		case http.MethodGet:
 			cartHandler.GetCart(w, r)
-		} else {
+		case http.MethodPost:
+			cartHandler.AddToCart(w, r)
+		case http.MethodDelete:
+			cartHandler.RemoveFromCart(w, r) // New functionality!
+		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	}))

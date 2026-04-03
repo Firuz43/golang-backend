@@ -16,6 +16,9 @@ func NewCartHandler(db *sqlx.DB) *CartHandler {
 	return &CartHandler{DB: db}
 }
 
+// ######################## A D D T O C A R T ###########################
+
+// AddToCart adds a product to the user's cart. If the product already exists in the cart, it updates the quantity instead of creating a duplicate entry. This is achieved using an UPSERT query, which simplifies the logic and reduces the number of database calls.
 func (h *CartHandler) AddToCart(w http.ResponseWriter, r *http.Request) {
 	// 1. Get UserID from Context (The Bouncer put it there!)
 	userID := r.Context().Value("user_id").(string)
@@ -76,6 +79,8 @@ func (h *CartHandler) GetCart(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(items)
 }
+
+// ######################## R E M O V E F R O M C A R T ###########################
 
 // RemoveFromCart deletes a specific product from the user's cart
 func (h *CartHandler) RemoveFromCart(w http.ResponseWriter, r *http.Request) {

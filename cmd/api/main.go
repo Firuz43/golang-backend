@@ -66,6 +66,7 @@ func main() {
 
 	// Order routes
 	http.HandleFunc("/checkout", middleware.AuthMiddleware(orderHandler.Checkout))
+	http.HandleFunc("/orders", middleware.AuthMiddleware(orderHandler.GetOrders))
 
 	log.Println("Server is running on http://localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

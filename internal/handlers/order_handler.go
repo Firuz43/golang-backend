@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -74,4 +75,42 @@ func (h *OrderHandler) Checkout(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"order_id": orderID, "message": "Order placed successfully!"})
+}
+
+// GetOrders returns all past orders for the logged-in user
+func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
+	userID := r.Context().Value("user_id").(string)
+
+	// 1. Define a temporary structure to hold the joined data
+	type OrderRow struct {
+		OrderID         string    `db:"order_id"`
+		TotalPrice      float64   `db:"total_price"`
+		Status          string    `db:"status"`
+		CreatedAt       time.Time `db:"created_at"`
+		ProductName     string    `db:"product_name"`
+		Quantity        int       `db:"quantity"`
+		PriceAtPurchase float64   `db:"price_at_purchase"`
+	}
+
+	var rows []OrderRow
+	// 2. Use a JOIN to get all orders with their items and product details in one query.
+	query := `
+		SELECT 
+			o.id AS order_id, o.total_price, o.status, o.created_at,
+			p.name AS product_name, oi.quantity, oi.price_at_purchase
+		FROM orders o
+		JOIN order_items oi ON o.id = oi.order_id
+		JOIN products p ON oi.product_id = p.id
+		WHERE o.user_id = $1
+		ORDER BY o.created_at DESC
+	`
+
+	err := h.DB.Select(&rows, query, userID)
+	if err != nil {
+		http.Error(w, "Could not fetch orders: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(rows)
 }

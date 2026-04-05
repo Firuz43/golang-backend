@@ -27,7 +27,7 @@ func GetJWTSecret() []byte {
 	return []byte(secret)
 }
 
-// 3. The Token Factory: This function takes user info and spits out the signed JWT.
+// 3. The Token Factory: This function takes user info and spits out the signed JWT.//
 func GenerateToken(userID string, email string) (string, error) {
 	// Step A: Fill out the "ID Card" (Claims)
 	claims := &Claims{

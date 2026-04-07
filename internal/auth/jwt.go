@@ -41,7 +41,7 @@ func GenerateToken(userID string, email string) (string, error) {
 		},
 	}
 
-	// Step B: Choose the "Lock" (HS256 is the standard signing algorithm)
+	// Step B: Choose the "Lock" (HS256 is the standard signing algorithm)//
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Step C: Apply the "Wax Seal" (Sign the token with our Secret Key)

@@ -38,6 +38,7 @@ func main() {
 	productHandler := handlers.NewProductHandler(db)
 	cartHandler := handlers.NewCartHandler(db)
 	orderHandler := handlers.NewOrderHandler(db)
+	categoryHandler := handlers.NewCategoryHandler(db)
 
 	// 3. Routes
 	//Auth routes
@@ -67,6 +68,10 @@ func main() {
 	// Order routes
 	http.HandleFunc("/checkout", middleware.AuthMiddleware(orderHandler.Checkout))
 	http.HandleFunc("/orders", middleware.AuthMiddleware(orderHandler.GetOrders))
+
+	// Category routes
+	http.HandleFunc("/categories", categoryHandler.GetCategories)
+	http.HandleFunc("/categories/add", middleware.AuthMiddleware(categoryHandler.CreateCategory))
 
 	log.Println("Server is running on http://localhost:" + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

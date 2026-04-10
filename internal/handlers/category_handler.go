@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Firuz43/ecommerce/internal/models"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -45,27 +44,4 @@ func (h *CategoryHandler) GetCategories(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	json.NewEncoder(w).Encode(cats)
-}
-
-// Updated GetProducts to allow filtering by Category ID
-func (h *ProductHandler) GetProductsByCategory(w http.ResponseWriter, r *http.Request) {
-	categoryID := r.URL.Query().Get("category_id")
-	var products []models.Product
-	var err error
-
-	if categoryID != "" {
-		// Filtered view
-		query := `SELECT * FROM products WHERE category_id = $1 ORDER BY created_at DESC`
-		err = h.DB.Select(&products, query, categoryID)
-	} else {
-		// General view
-		query := `SELECT * FROM products ORDER BY created_at DESC`
-		err = h.DB.Select(&products, query)
-	}
-
-	if err != nil {
-		http.Error(w, "Database error", http.StatusInternalServerError)
-		return
-	}
-	json.NewEncoder(w).Encode(products)
 }

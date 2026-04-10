@@ -20,20 +20,26 @@ func NewProductHandler(db *sqlx.DB) *ProductHandler {
 
 // ################ G E T  A L L  P R O D U C T S #################
 // GetProducts returns all products in the database
+// Updated GetProducts to allow filtering by Category ID
 func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
-	//
+	categoryID := r.URL.Query().Get("category_id")
 	var products []models.Product
+	var err error
 
-	// We want to return products sorted by newest first, so we order by created_at DESC
-	query := `SELECT * FROM products ORDER BY created_at DESC`
-	// sqlx's Select method will automatically map the rows to our Product struct slice
-	err := h.DB.Select(&products, query)
+	if categoryID != "" {
+		// Filtered view
+		query := `SELECT * FROM products WHERE category_id = $1 ORDER BY created_at DESC`
+		err = h.DB.Select(&products, query, categoryID)
+	} else {
+		// General view
+		query := `SELECT * FROM products ORDER BY created_at DESC`
+		err = h.DB.Select(&products, query)
+	}
+
 	if err != nil {
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(products)
 }
 

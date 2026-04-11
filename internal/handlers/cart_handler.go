@@ -20,7 +20,7 @@ func NewCartHandler(db *sqlx.DB) *CartHandler {
 
 // AddToCart adds a product to the user's cart. If the product already exists in the cart, it updates the quantity instead of creating a duplicate entry. This is achieved using an UPSERT query, which simplifies the logic and reduces the number of database calls.
 func (h *CartHandler) AddToCart(w http.ResponseWriter, r *http.Request) {
-	// 1. Get UserID from Context (The Bouncer put it there!)
+	// 1. Get UserID from Context (The Bouncer put it there!) // We can be sure it's there because the AuthMiddleware checks for it before allowing access to this handler
 	userID := r.Context().Value("user_id").(string)
 
 	var req struct {

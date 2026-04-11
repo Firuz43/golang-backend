@@ -11,19 +11,23 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// enableCORS is a separate middleware function to keep main() clean
 func enableCORS(next http.Handler) http.Handler {
-	return http.HandleFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Allow Flutter app origins (use "*" for development)
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
+		// Handle preflight "OPTIONS" requests from browsers/emulators
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
+
 		next.ServeHTTP(w, r)
-	})	
-})
+	})
+}
 
 func main() {
 

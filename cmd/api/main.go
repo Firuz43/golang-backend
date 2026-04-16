@@ -92,5 +92,5 @@ func main() {
 	http.HandleFunc("/categories/add", middleware.AuthMiddleware(categoryHandler.CreateCategory))
 
 	log.Println("Server is running on http://localhost:" + port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, enableCORS(http.DefaultServeMux)))
 }

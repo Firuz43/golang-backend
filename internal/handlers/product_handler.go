@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/Firuz43/ecommerce/internal/models"
@@ -26,24 +27,27 @@ func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	var products []models.Product
 	var err error
 
+	columns := `id, name, description, price, stock, image_url, category_id, created_at`
+
 	if categoryID != "" {
 		// Filtered view
-		query := `SELECT * FROM products WHERE category_id = $1 ORDER BY created_at DESC`
+		query := `SELECT ` + columns + ` FROM products WHERE category_id = $1 ORDER BY created_at DESC`
 		err = h.DB.Select(&products, query, categoryID)
 	} else {
 		// General view
-		query := `SELECT * FROM products ORDER BY created_at DESC`
+		query := `SELECT ` + columns + ` FROM products ORDER BY created_at DESC`
 		err = h.DB.Select(&products, query)
 	}
 
 	if err != nil {
 		http.Error(w, "Database error", http.StatusInternalServerError)
+		log.Printf("GET PRODUCTS ERROR: %v", err)
 		return
 	}
 	json.NewEncoder(w).Encode(products)
 }
 
-// ################# C R E A T E  P R O D U C T #################
+// ################# C R E A T E  P R O D U C T #################/
 // CreateProduct allows adding a new item to the catalog//
 func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	// 1. Define the input structure
